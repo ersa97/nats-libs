@@ -61,7 +61,7 @@ func NatsSubscribe(connection models.NatsConnection) (data interface{}, err erro
 	}
 	defer conn.Close()
 
-	sub, err := conn.Subscribe(connection.Subject, func(msg *nats.Msg) {})
+	sub, err := conn.SubscribeSync(connection.Subject)
 	defer sub.Unsubscribe()
 
 	msg, err := sub.NextMsg(10 * time.Second)
