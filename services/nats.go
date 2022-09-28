@@ -66,6 +66,10 @@ func NatsSubscribe(connection models.NatsConnection) (data interface{}, err erro
 
 	msg, err := sub.NextMsg(10 * time.Second)
 
+	if err != nil {
+		return nil, err
+	}
+
 	// log.Println("data", msg.Data)
 
 	return msg.Data, nil
