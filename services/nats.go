@@ -60,7 +60,7 @@ func StartConnection(connection models.NatsConnection) (*nats.Conn, error) {
 
 	log.Println("[NATS] " + url + "|" + connection.Subject)
 
-	conn, err := nats.Connect("nats://" + connection.Username + ":" + connection.Password + "@" + url)
+	conn, err := nats.Connect("nats://"+connection.Username+":"+connection.Password+"@"+url, nats.Timeout(10*time.Second))
 	if err != nil {
 		return nil, err
 	}
