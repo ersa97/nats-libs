@@ -34,34 +34,14 @@ func NatsPublish(connection *models.NatsConnection, data interface{}) (responseS
 
 	return http.StatusOK, "Message => successfully to publish a message to nats.", nil
 
-	// err = conn.PublishMsg(&nats.Msg{
-	// 	Subject: connection.Subject,
-	// 	Data:    []byte(helpers.JSONEncode(data)),
-	// 	Sub: &nats.Subscription{
-	// 		Subject: connection.Subject,
-	// 	},
-	// })
-
-	// if err != nil {
-	// 	return http.StatusBadRequest, "failed to publish message to nats", err
-	// }
-
-	// return http.StatusOK, "Message => successfully to publish a message to nats.", nil
-
 }
 
-func NatsSubscribe(connection models.NatsConnection) (data interface{}, err error) {
-	url := connection.Ip + ":" + connection.Port
+func NatsSubscribe(connection models.NatsConnection, conn *nats.Conn) (*nats.Msg, error) {
 
-	log.Println("[NATS] " + url + "|" + connection.Subject)
-
-	conn, err := nats.Connect("nats://" + connection.Username + ":" + connection.Password + "@" + url)
+	sub, err := conn.SubscribeSync(connection.Subject)
 	if err != nil {
 		return nil, err
 	}
-	defer conn.Close()
-
-	sub, err := conn.SubscribeSync(connection.Subject)
 	defer sub.Unsubscribe()
 
 	msg, err := sub.NextMsg(10 * time.Second)
@@ -72,5 +52,18 @@ func NatsSubscribe(connection models.NatsConnection) (data interface{}, err erro
 
 	// log.Println("data", msg.Data)
 
-	return msg.Data, nil
+	return msg, nil
+}
+
+func StartConnection(connection models.NatsConnection) (*nats.Conn, error) {
+	url := connection.Ip + ":" + connection.Port
+
+	log.Println("[NATS] " + url + "|" + connection.Subject)
+
+	conn, err := nats.Connect("nats://" + connection.Username + ":" + connection.Password + "@" + url)
+	if err != nil {
+		return nil, err
+	}
+
+	return conn, nil
 }
