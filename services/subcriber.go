@@ -9,7 +9,7 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
-func SubscribeNats(connection models.NatsConnection) (data *nats.Msg, err error) {
+func SubscribeNats(connection models.NatsConnection) (data *nats.Msg, forever chan bool, err error) {
 	log.Println("connect to NATS")
 
 	conn, err := StartConnection(connection)
@@ -25,7 +25,7 @@ func SubscribeNats(connection models.NatsConnection) (data *nats.Msg, err error)
 
 	fmt.Println("data -> ", data.Data)
 
-	forever := make(chan bool)
+	forever = make(chan bool)
 	defer close(forever)
 	deliveredMsg := make(chan *nats.Msg)
 
