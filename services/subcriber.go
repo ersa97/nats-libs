@@ -25,6 +25,16 @@ func SubscribeNats(connection models.NatsConnection) (data *nats.Msg, err error)
 
 	fmt.Println("data -> ", data.Data)
 
+	forever := make(chan bool)
+	defer close(forever)
+	deliveredMsg := make(chan *nats.Msg)
+
+	go func() {
+		deliveredMsg <- data
+	}()
+
+	<-forever
+
 	return
 
 }
