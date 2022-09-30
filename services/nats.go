@@ -38,19 +38,13 @@ func NatsPublish(connection *models.NatsConnection, data interface{}) (responseS
 
 func NatsSubscribe(connection models.NatsConnection, conn *nats.Conn) (*nats.Msg, error) {
 
-	ch := make(chan *nats.Msg, 64)
-	sub, err := conn.ChanSubscribe(connection.Subject, ch)
-
-	var msgCh *nats.Msg
-	for msg := range ch {
-		msgCh = msg
-	}
+	sub, err := conn.SubscribeSync(connection.Subject)
 	if err != nil {
 		return nil, err
 	}
-	defer sub.Unsubscribe()
+	// defer sub.Unsubscribe()
 
-	// msg, err := sub.NextMsg(10 * time.Second)
+	msg, err := sub.NextMsg(10 * time.Second)
 
 	if err != nil {
 		return nil, err
@@ -58,7 +52,7 @@ func NatsSubscribe(connection models.NatsConnection, conn *nats.Conn) (*nats.Msg
 
 	// log.Println("data", msg.Data)
 
-	return msgCh, nil
+	return msg, nil
 }
 
 func StartConnection(connection models.NatsConnection) (*nats.Conn, error) {
