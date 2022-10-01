@@ -1,7 +1,13 @@
 package models
 
 type Request struct {
-	Route string      `json:"route"`
-	Param interface{} `json:"param"`
-	Data  interface{} `json:"data"`
+	Command string      `json:"command"`
+	Param   interface{} `json:"param"`
+	Data    interface{} `json:"data"`
+}
+
+type StreamSubject struct {
+	StreamName     string
+	StreamSubjects string
+	SubjectName    string
 }

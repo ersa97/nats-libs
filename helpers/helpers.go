@@ -1,16 +1,9 @@
 package helpers
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 )
-
-func JSONEncode(data interface{}) string {
-	jsonResult, _ := json.Marshal(data)
-
-	return string(jsonResult)
-}
 
 func ErrorMessage(message string, err interface{}) {
 	fmt.Println()
