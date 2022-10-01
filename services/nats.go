@@ -88,7 +88,7 @@ func PublishMessage(connection models.NatsConnection, streamName, streamSubjects
 	ssubject := models.StreamSubject{
 		StreamName:     streamName,
 		StreamSubjects: streamSubjects,
-		SubjectName:    streamName,
+		SubjectName:    subjectName,
 	}
 
 	err = createStream(js, ssubject)
