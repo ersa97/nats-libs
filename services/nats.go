@@ -71,7 +71,7 @@ func PublishMessage(connection models.NatsConnection, streamName, streamSubjects
 
 	url := connection.Ip + ":" + connection.Port
 
-	log.Println("[NATS] " + url + "|" + connection.Subject)
+	log.Println("[NATS] " + url)
 
 	nc, err := nats.Connect(url)
 	if err != nil {
@@ -128,6 +128,7 @@ func createStream(js nats.JetStreamContext, ssubject models.StreamSubject) error
 	stream, err := js.StreamInfo(ssubject.StreamName)
 	if err != nil {
 		log.Println(err)
+		return err
 	}
 	if stream == nil {
 		log.Printf("creating stream %q and subjects %q", ssubject.StreamName, ssubject.StreamSubjects)
