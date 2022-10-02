@@ -1,21 +1,37 @@
 package services
 
-// func SubscribeNats(connection models.NatsConnection) (data *nats.Msg, forever chan bool, err error) {
-// 	log.Println("connect to NATS")
+import (
+	"context"
+	"log"
 
-// 	conn, err := StartConnection(connection)
-// 	if err != nil {
-// 		helpers.ErrorMessage("failed to connect NATS", err)
-// 	}
+	"github.com/ersa97/nats-libs/helpers"
+	"github.com/ersa97/nats-libs/models"
+	"github.com/nats-io/nats.go"
+)
 
-// 	data, err = NatsSubscribe(connection, conn)
-// 	if err != nil {
-// 		helpers.ErrorMessage("failed to subscribe NATS", err)
-// 		return
-// 	}
+func SubscribeNats(connection models.NatsConnection, subjectname string) (sub *nats.Subscription, ctx context.Context, err error) {
+	url := connection.Ip + ":" + connection.Port
 
-// 	fmt.Println("data -> ", data.Data)
+	log.Println("[NATS] " + url)
 
-// 	return
+	nc, err := nats.Connect(url)
+	if err != nil {
+		helpers.ErrorMessage(err.Error(), err)
+		return nil, nil, err
+	}
 
-// }
+	js, err := nc.JetStream()
+	if err != nil {
+		helpers.ErrorMessage(err.Error(), err)
+		return nil, nil, err
+	}
+
+	subSubjectName := subjectname
+
+	sub, _ = js.PullSubscribe(subSubjectName, "")
+
+	ctx, _ = context.WithCancel(context.Background())
+
+	return
+
+}
