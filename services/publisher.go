@@ -9,7 +9,7 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
-func PublishMessage(connection models.NatsConnection, streamName, streamSubjects, subjectName, Command string, Param, Data interface{}) error {
+func PublishMessage(connection models.NatsConnection, ssubject models.StreamSubject, request models.Request) error {
 
 	url := connection.Ip + ":" + connection.Port
 
@@ -27,22 +27,10 @@ func PublishMessage(connection models.NatsConnection, streamName, streamSubjects
 		return err
 	}
 
-	ssubject := models.StreamSubject{
-		StreamName:     streamName,
-		StreamSubjects: streamSubjects,
-		SubjectName:    subjectName,
-	}
-
 	err = createStream(js, ssubject)
 	if err != nil {
 		helpers.ErrorMessage(err.Error(), err)
 		return err
-	}
-
-	request := models.Request{
-		Command: Command,
-		Param:   Param,
-		Data:    Data,
 	}
 
 	err = Publish(js, ssubject, request)

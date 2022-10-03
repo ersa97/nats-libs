@@ -30,7 +30,8 @@ func SubscribeNats(connection models.NatsConnection, subjectname string) (sub *n
 
 	sub, _ = js.PullSubscribe(subSubjectName, "muunship")
 
-	ctx, _ = context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	return
 
